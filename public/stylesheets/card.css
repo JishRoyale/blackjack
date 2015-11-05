@@ -1,0 +1,133 @@
+/**
+ * card.css
+ *
+ * Contains the styles that accompany the HTML5 card created in card.js
+ *
+ * All of the behaviours and content of the card can be controlled using CSS
+ * classes.
+ *
+ * Ranks: ace, two, three, four, five, six, seven, eight, nine, ten, jack, queen
+ *        and king
+ * Suits: diamonds, hearts, clubs and spades
+ * Faceup/Facedown: both classes(faceup and facedown) determine whether the back
+ *                  or front of the card is visible
+ *
+ * Themes
+ * ------
+ * There are two themes included with this: upholstry and seigiha.
+ *
+ */
+
+/******** CARD ********/
+.card {
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  display: inline-block; /* shrink to fit */
+  font-family: 'Domine', serif;
+  font-size: 4vh;
+  position: relative;
+  transform-origin: 0 50% 0;
+  width: 20vh;
+}
+.card:not(:first-child) { margin-left: -80%; }
+.card::after {
+  content: '';
+  display: block;
+  padding-top: 140%;
+}
+.card, .front, .back {
+  border-radius: 2vh;
+  box-sizing: border-box;
+  transform-style: preserve-3d;
+}
+.front, .back {
+  backface-visibility: hidden;
+  overflow: hidden;
+  position: absolute;
+  top: 0; bottom: 0; right: 0; left: 0; /* follow the parent's edges */
+}
+.front { background-color: white; }
+.back  { border: 1.4vh solid white; }
+.middle {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+/******** END CARD ********/
+
+/*** SUITS ********/
+.suit { font-size: 17vh; }
+.card.hearts, .card.diamonds { color: red; }
+.card.spades, .card.clubs    { color: black; }
+.spades   .suit::before, .spades   .rank::after { content: "♠"; }
+.clubs    .suit::before, .clubs    .rank::after { content: "♣"; }
+.diamonds .suit::before, .diamonds .rank::after { content: "♦"; }
+.hearts   .suit::before, .hearts   .rank::after { content: "♥"; }
+/******** END SUITS ********/
+
+/******** RANKS ********/
+.rank {
+  position: absolute;
+  text-align: center;
+}
+.rank::before { display: block; }
+.rank.bottom {
+  bottom: 1.4vh;
+  right: 1.4vh;
+  transform: rotate(180deg);
+}
+.rank.top {
+  left: 1.4vh;
+  top: 1.4vh;
+}
+.ace   .rank::before { content: "A"; }
+.two   .rank::before { content: "2"; }
+.three .rank::before { content: "3"; }
+.four  .rank::before { content: "4"; }
+.five  .rank::before { content: "5"; }
+.six   .rank::before { content: "6"; }
+.seven .rank::before { content: "7"; }
+.eight .rank::before { content: "8"; }
+.nine  .rank::before { content: "9"; }
+.ten   .rank::before { content: "10"; }
+.jack  .rank::before { content: "J"; }
+.queen .rank::before { content: "Q"; }
+.king  .rank::before { content: "K"; }
+/******** END RANKS ********/
+
+/******** FACEUP/FACEDOWN ********/
+.faceup   .back  { transform: rotateY(180deg); }
+.facedown .back  { transform: rotateY(0deg); }
+.faceup   .front { transform: rotateY(0deg); }
+.facedown .front { transform: rotateY(180deg); }
+/******** END FACEUP/FACEDOWN ********/
+
+/******** THEMES ********/
+.back.seigiha {
+  background-color:red;
+  background-image:
+  radial-gradient(circle at 100% 150%, red 24%, white 25%, white 28%, red 29%, red 36%, white 36%, white 40%, transparent 40%, transparent),
+  radial-gradient(circle at 0    150%, red 24%, white 25%, white 28%, red 29%, red 36%, white 36%, white 40%, transparent 40%, transparent),
+  radial-gradient(circle at 50%  100%, white 10%, red 11%, red 23%, white 24%, white 30%, red 31%, red 43%, white 44%, white 50%, red 51%, red 63%, white 64%, white 71%, transparent 71%, transparent),
+  radial-gradient(circle at 100% 50%, white 5%, red 6%, red 15%, white 16%, white 20%, red 21%, red 30%, white 31%, white 35%, red 36%, red 45%, white 46%, white 49%, transparent 50%, transparent),
+  radial-gradient(circle at 0    50%, white 5%, red 6%, red 15%, white 16%, white 20%, red 21%, red 30%, white 31%, white 35%, red 36%, red 45%, white 46%, white 49%, transparent 50%, transparent);
+  background-size:100px 50px;
+}
+.back.upholstry {
+  background:
+  radial-gradient(hsl(0, 100%, 27%) 4%, hsl(0, 100%, 18%) 9%, hsla(0, 100%, 20%, 0) 9%) 0 0,
+  radial-gradient(hsl(0, 100%, 27%) 4%, hsl(0, 100%, 18%) 8%, hsla(0, 100%, 20%, 0) 10%) 50px 50px,
+  radial-gradient(hsla(0, 100%, 30%, 0.8) 20%, hsla(0, 100%, 20%, 0)) 50px 0,
+  radial-gradient(hsla(0, 100%, 30%, 0.8) 20%, hsla(0, 100%, 20%, 0)) 0 50px,
+  radial-gradient(hsla(0, 100%, 20%, 1) 35%, hsla(0, 100%, 20%, 0) 60%) 50px 0,
+  radial-gradient(hsla(0, 100%, 20%, 1) 35%, hsla(0, 100%, 20%, 0) 60%) 100px 50px,
+  radial-gradient(hsla(0, 100%, 15%, 0.7), hsla(0, 100%, 20%, 0)) 0 0,
+  radial-gradient(hsla(0, 100%, 15%, 0.7), hsla(0, 100%, 20%, 0)) 50px 50px,
+  linear-gradient(45deg, hsla(0, 100%, 20%, 0) 49%, hsla(0, 100%, 0%, 1) 50%, hsla(0, 100%, 20%, 0) 70%) 0 0,
+  linear-gradient(-45deg, hsla(0, 100%, 20%, 0) 49%, hsla(0, 100%, 0%, 1) 50%, hsla(0, 100%, 20%, 0) 70%) 0 0;
+  background-color: #300;
+  background-size: 100px 100px;
+}
+/******** END THEMES ********/

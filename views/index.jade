@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  div#debugBox
+  div#table
+    div.card-area.dealer
+    div.card-area.player
+    div#table-center
+      h1 COMP4004 BlackJack
+      p Dealer must stand on 17 and must draw to 16
+      div.button-area
+        button#placeholder(disabled) Placeholder
+  div.players
+    h1 Table
+    ul
+  div.scores
+    p Dealer:
+      span.dealer
+    p You:
+      span.player
+  script(src="/javascripts/console.js")
+  script(src="/javascripts/card.js")
+  script(src="/javascripts/client.js")
