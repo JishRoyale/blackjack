@@ -2,8 +2,8 @@
 #
 # @author Abe Fehr
 #
-BlackJack = require "../src/blackjack"
 Map = require "../src/map"
+BlackJack = require "../src/blackjack"
 
 # The Table module
 class Table
@@ -18,8 +18,11 @@ class Table
   #
   # @param [IO] io a Socket.IO server to listen with
   #
-  constructor: (@io) ->
+  constructor: (@io, GameType) ->
     if @io? then @io.on "connection", handlePackets
+    listenToGame()
+
+  listenToGame = ->
     blackjack.onThing "deal card dealer", (card) ->
       socket.emit "deal card dealer", card for socket in sockets.getValues()
       sendScores()
@@ -152,13 +155,22 @@ class Table
 
     # play again
     #
-    socket.on "play again", () ->
+    socket.on "play again", ->
       # Create a new instance of the game
       blackjack = new BlackJack()
       # Clear the hand
       #players[sockets[socket.id].uuid].hand = []
       # Somehow transfer the players from here to there
-      blackjack.registerPlayers players
       blackjack.start socket
+
+    # reset server
+    #
+    # Clears the player list and starts a new instance of BlackJack
+    #
+    socket.on "reset server", ->
+      blackjack = new BlackJack()
+      players = new Map()
+      sockets = new Map()
+      listenToGame()
 
 module.exports = Table

@@ -134,10 +134,13 @@ socket.on("state", function(state) {
   printDebug("Just heard that the current state was: " + state, DEBUG);
 
   // If the state was lobby, add the start button
-  if(state === 1) {
-    switchToLobby();
-  } else if(state === 2) {
-    switchToPlaying();
+  switch (state) {
+    case 1:
+      switchToLobby();
+      break;
+    case 2:
+      switchToPlaying();
+      break;
   }
 });
 
@@ -148,7 +151,8 @@ socket.on("state", function(state) {
  */
 socket.on("connect", function () {
   if (!(uuid = localStorage.getItem("uuid"))) {
-    var randomlyGeneratedUID = Math.random().toString(36).substring(3,16) + new Date();
+    var date = new Date();
+    var randomlyGeneratedUID = Math.random().toString(36).substring(3,16)+date;
     localStorage.setItem("uuid", randomlyGeneratedUID);
   }
 
@@ -242,6 +246,9 @@ var disableButtons = function() {
   $(".button-area").find("button").prop("disabled", true);
 };
 
+/**
+ * Asks the user if he wants another game
+ */
 var askToPlayAgain = function() {
   var buttonArea = $(".button-area");
   buttonArea.empty();
@@ -256,9 +263,27 @@ var askToPlayAgain = function() {
   buttonArea.append(playAgainButton);
 };
 
+/**
+ * Clears all of the cards in the playing area
+ */
 var clearPlayingArea = function() {
   dealer = [];
   player = [];
   $(".card-area.dealer").empty();
   $(".card-area.player").empty();
 };
+
+/**
+ * What to do when the reset button is clicked in the top corner
+ *
+ * This is only intended for debugging. It is useful to restore the server
+ * restarting it and refreshing all the webpages
+ */
+$("#resetButton").on("click", function() {
+  // Send a message to the server to reset everything
+  socket.emit("reset server");
+  socket.disconnect();
+
+  // Refresh the webpage in a second
+  setTimeout(function() { location.reload() }, 1000);
+});

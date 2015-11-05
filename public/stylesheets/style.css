@@ -145,3 +145,10 @@ div.players {
 div.players h1 {
   margin: 0;
 }
+
+#resetButton {
+  color: red;
+  position: absolute;
+  right: 0;
+  top: 0;
+}

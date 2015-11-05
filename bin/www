@@ -8,18 +8,7 @@ io = require("socket.io") http
 
 # The game-related modules
 Table = require "../src/table"
-
-# Normalize a port into a number, string, or false.
-normalizePort = (val) ->
-  port = parseInt val, 10
-
-  # named pipe
-  if isNaN port
-    val
-  # port number
-  else if port >= 0
-    port
-  false
+BlackJack = require "../src/blackjack"
 
 # Event listener for HTTP server "error" event.
 onError = (error) ->
@@ -61,5 +50,5 @@ server.on "listening", onListening
 # Open a Socket.io connection
 io.listen server
 
-# Create an instance of a new connection manager
-table = new Table io
+# Create a new Table for playing BlackJack on
+table = new Table io, BlackJack
