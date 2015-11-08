@@ -7,12 +7,37 @@ My multiplayer, HTML5 BlackJack game
 - splitting
 - allow user to add AI player after they've already hit start
 - show the cards under the players in the list more beautifully
-- make a sweet logo for comp4004 blackjack
 - re-add the score bit so the scores show up properly
 - dealer should deal until 17
 - multiple real players
 - detect who wins
+- bold whose turn it is
+- remove the player when they disconnect but only reset the table when there are no players
+- do something when the game is ongoing and we try to join
+- show who you are in the player list
 - detect 7-card-charlie
+- remove the thing where it says "I heard the state was X"
+
+# Selenium Acceptance Testcases(possibly Cucumber as well?)
+
+### GeneralUITest
+- title is COMP4004 BlackJack
+- button exists for adding AI players
+- button exists for starting game
+- place for dealer/player scores on the screen
+- debug box exists for console output
+
+### AddPlayersTest
+- game can't be started without adding at least one player
+- AI players can be added to the game
+- added players show up in the list at the top left
+- more than 3 additional players cannot be added to the game
+
+### GameTest
+- game can be started and deals 2 cards to dealer and 2 cards to player
+- dealer's hole card is facedown
+- one card shows in the list for each person(not two)
+- for the player that started the game, stand and hit are for sure enabled after the cards are dealt, and split is only enabled if the ranks of both onscreen cards match
 
 # Assignment Outline
 

@@ -28,7 +28,16 @@ class Table
     if @io? then @io.on "connection", @registerSocketEvents
     @state = Table.states.OPEN
     self = @
-    #listenToGame()
+
+  # A list of all the possible table states
+  #
+  # OPEN: Before the game starts, when registration is still allowed, the table
+  # is open. Despite this, the table won't accept new players for registration
+  # in an open state if there are more than MAX_PLAYER players
+  #
+  @states:
+    OPEN: 1
+    PLAYING: 2
 
   # Checks whether or not a particular uuid is registered to the table
   #
@@ -134,11 +143,13 @@ class Table
       console.log "Trying to register player with uuid: #{uuid}."
       player = new ActualPlayer uuid, socket
       if not self.register player
-        # TODO: Do something when the registration fails
+        socket.emit "display message", "Oops! There is already a game ongoing.
+        Please refresh the window after a while to see if the tables have become
+        available"
         socket.disconnect()
       else
         socket.emit "display message", "Welcome to 4004 BlackJack! Press start
-        to play or wait for other players to join first"
+        to play once there are enough other players"
         socket.emit "state", self.state
       sendPlayerInfo()
 
@@ -234,15 +245,5 @@ class Table
       blackjack = new BlackJack()
       blackjack.start socket
   ###
-
-  # A list of all the possible table states
-  #
-  # OPEN: Before the game starts, when registration is still allowed, the table
-  # is open. Despite this, the table won't accept new players for registration
-  # in an open state if there are more than MAX_PLAYER players
-  #
-  @states:
-    OPEN: 1
-    PLAYING: 2
 
 module.exports = Table

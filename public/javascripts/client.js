@@ -228,6 +228,7 @@ var switchToLobby = function() {
   // Create a start button
   var aiButton = $("<button></button>")
     .append("Add AI Player")
+    .addClass("addAIPlayer")
     .on("click", function() {
       socket.emit("add AI player");
 
@@ -238,6 +239,7 @@ var switchToLobby = function() {
   // Create a start button
   var startButton = $("<button></button>")
     .append("Start Game")
+    .addClass("startGame")
     .on("click", function() {
       socket.emit("start game");
       disableButtons();
