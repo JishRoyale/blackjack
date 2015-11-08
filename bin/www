@@ -7,8 +7,8 @@ http = require "http"
 io = require("socket.io") http
 
 # The game-related modules
-Table = require "../src/table"
-BlackJack = require "../src/blackjack"
+Table = require "../src/Table"
+BlackJack = require "../src/BlackJack"
 
 # Event listener for HTTP server "error" event.
 onError = (error) ->

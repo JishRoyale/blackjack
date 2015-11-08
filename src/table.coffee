@@ -14,7 +14,7 @@ Map = require "../src/Map"
 
 class Table
 
-  self = undefined # "this", later on. Done so callbacks can use "this" or "@"
+  self = undefined # Set to "this". Done so callbacks can still access this or @
 
   # Returns a new instance of a Table
   #
