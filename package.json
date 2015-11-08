@@ -1,12 +1,12 @@
 {
-  "name": "blackjack",
+  "name": "comp4004blackjack",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "./bin/www"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "0.12.4"
   },
   "dependencies": {
     "body-parser": "~1.10.2",
