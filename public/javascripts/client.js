@@ -225,14 +225,16 @@ var switchToLobby = function() {
   var buttonArea = $(".button-area");
   buttonArea.empty();
 
-  // Create a start button
+  // Create a the add AI player button
   var aiButton = $("<button></button>")
     .append("Add AI Player")
     .addClass("addAIPlayer")
     .on("click", function() {
       socket.emit("add AI player");
-
-      // Do something here to add an AI player to the game
+      // Re-enable the start game button if it was disabled
+      $(".button-area").find(".startGame")
+        .html("Start Game")
+        .prop("disabled", false);
     });
   buttonArea.append(aiButton);
 
@@ -242,9 +244,10 @@ var switchToLobby = function() {
     .addClass("startGame")
     .on("click", function() {
       socket.emit("start game");
-      disableButtons();
       // Indicate to the user that we're waiting for the other players to start
-      $(".button-area").find("button").html("Waiting for other players");
+      $(".button-area").find(".startGame")
+        .html("Waiting for other players")
+        .prop("disabled", true);
     });
   buttonArea.append(startButton);
 };

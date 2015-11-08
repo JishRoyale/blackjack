@@ -171,6 +171,7 @@ class Table
         when "stand"
           console.log "A request was (by a man) made to stand."
           self.players.get(socket.id).status = "standing"
+          console.log "The player's status was just changed to standing"
           self.game.nextTurn()
           sendPlayerInfo()
         when "hit"
@@ -197,7 +198,7 @@ class Table
       handlers =
         hit: (->)
         stand: ->
-          console.log "A request was (by a robot) made to stand."
+          console.log "A request was made (by a robot) to stand."
           self.players.get(socket.id).status = "standing"
           console.log "Just changed this robot's status to standing"
           self.game.nextTurn()
@@ -206,7 +207,8 @@ class Table
           console.log "Status: #{self.players.get(socket.id).status}"
         split: (->)
       unless self.register new AIPlayer handlers
-        socket.emit "display message", "There's no room left in the table!"
+        socket.emit "display message", "There's not enough room at the table for
+        another player"
       sendPlayerInfo()
       console.log "A robot was added to the game"
 

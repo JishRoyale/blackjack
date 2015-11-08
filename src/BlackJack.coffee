@@ -103,12 +103,15 @@ class BlackJack
   nextTurn: () ->
     currentPlayer = ++currentPlayer % @table.players.size
     guy = @table.players.getValues()[currentPlayer]
+    console.log "Who requested the thing: #{guy.uuid}"
+    console.log "He's: #{guy.status} by the way"
     counter = 0
     while guy.status is "standing" and ++counter < @table.players.size
       currentPlayer = ++currentPlayer % @table.players.size
       guy = @table.players.getValues()[currentPlayer]
 
     # Do the turn
+    console.log "Counter: #{counter} and players size: #{@table.players.size}"
     unless counter is @table.players.size - 1
       guy.status = "playing"
       console.log "Just changed some player's status to playing"

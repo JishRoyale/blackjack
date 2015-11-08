@@ -5,7 +5,7 @@ My multiplayer, HTML5 BlackJack game
 # Things left to do
 
 - splitting
-- allow user to add AI player after they've already hit start
+- fix the issue where more than 1 additional AI player can't stand
 - show the cards under the players in the list more beautifully
 - re-add the score bit so the scores show up properly
 - dealer should deal until 17
