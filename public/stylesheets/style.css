@@ -72,8 +72,20 @@ html, body {
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.card-area.player { bottom: 4vh; }
+.card-area.split {
+  display: none;
+}
+.card-area.split::before {
+  content: "split hand";
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.card-area.player, .card-area.split { bottom: 4vh; }
 .card-area.dealer { top: 4vh; }
+.card-area.left { margin-left: -20vh; }
+.card-area.right { margin-left: 20vh; }
 .card-area.dealer::before {
   content: "dealer";
   left: 50%;

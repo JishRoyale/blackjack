@@ -4,11 +4,11 @@ var dealer = [];
 var player = [];
 
 /**
- * deal card dealer
+ * deal card to dealer
  *
  * Deals a card to the dealer
  */
-socket.on("deal card dealer", function(properties) {
+socket.on("deal card to dealer", function(properties) {
   // Create the card and deal it
   var card = new Card(properties);
   dealer.push(card);
@@ -25,11 +25,11 @@ socket.on("deal card dealer", function(properties) {
 });
 
 /**
- * deal card player
+ * deal card to player
  *
  * Deals a card to the player
  */
-socket.on("deal card player", function(properties) {
+socket.on("deal card to player", function(properties) {
   // Create the card and deal it
   var card = new Card(properties);
   player.push(card);
@@ -122,6 +122,15 @@ socket.on("update player score", function(score) {
 });
 
 /**
+ * update player score
+ *
+ * Updates the score of the player
+ */
+socket.on("update player score", function(score) {
+  $(".scores span.player").html(score);
+});
+
+/**
  * display message
  *
  * Writes a message to the debug console
@@ -152,7 +161,7 @@ socket.on("state", function(state) {
 socket.on("connect", function () {
   if (!(uuid = localStorage.getItem("uuid"))) {
     var date = new Date();
-    var randomlyGeneratedUID = Math.random().toString(36).substring(3,16)+date;
+    var randomlyGeneratedUID = Math.random().toString(36).substring(3,16);
     localStorage.setItem("uuid", randomlyGeneratedUID);
   }
 
@@ -172,29 +181,41 @@ socket.on("error", function(message) {
 /**
  * stats
  *
- * Forwards the error to the debug console on screen and in the F12 Dev Tools
+ * Receives and posts the stats for all players
  */
 socket.on("stats", function(players) {
   $("div.players").find("ul").empty();
   for (var i=0; i<players.length; ++i) {
     var player = players[i];
     // Construct the list item that talks about the player
-    var playerListItem = $("<li></li>");
-    playerListItem.append(player.uuid.substring(0,5)); // Their UUID
-    playerListItem.append(" - " + player.status);      // Their status
+    var playerListItem = $("<li></li>")
+      .append("Name: ")
+      .append(player.uuid.substring(0,5)) // Their UUID
+      .append(" - card: " + (player.hands[0][0] && player.hands[0][0] !== undefined ? player.hands[0][0].string : "" ))
+      .append(" - status: " + player.status);
     $("div.players").find("ul").append(playerListItem);
   }
 });
 
 /**
- * flip dealer card
- *
- * Flips the facedown card on the screen
+ * Flips the facedown card on the screen(if it is facedown)
  */
-socket.on("flip dealer card", function() {
+socket.on("flip hole card", function() {
   var card = dealer[1];
   card.flip(); // Because this is the one that's facedown
   printDebug("The dealer's card was flipped faceup");
+});
+
+
+/**
+ * allow actions
+ *
+ *
+ */
+socket.on("allow actions", function(actions) {
+  for (var action in actions) {
+    $(".button-area").find("." + actions[action]).prop("disabled", false);
+  }
 });
 
 /**
@@ -205,14 +226,24 @@ var switchToLobby = function() {
   buttonArea.empty();
 
   // Create a start button
-  var startButton = $("<button></button>");
-  startButton.append("Start Game");
-  startButton.on("click", function() {
-    socket.emit("start game");
-    disableButtons();
-    // Indicate to the user that we're waiting for the other players to start
-    $(".button-area").find("button").html("Waiting for other players");
-  });
+  var aiButton = $("<button></button>")
+    .append("Add AI Player")
+    .on("click", function() {
+      socket.emit("add AI player");
+
+      // Do something here to add an AI player to the game
+    });
+  buttonArea.append(aiButton);
+
+  // Create a start button
+  var startButton = $("<button></button>")
+    .append("Start Game")
+    .on("click", function() {
+      socket.emit("start game");
+      disableButtons();
+      // Indicate to the user that we're waiting for the other players to start
+      $(".button-area").find("button").html("Waiting for other players");
+    });
   buttonArea.append(startButton);
 };
 
@@ -224,19 +255,38 @@ var switchToPlaying = function() {
   buttonArea.empty();
 
   // Create a hit button
-  var hitButton = $("<button></button>");
-  hitButton.append("Hit");
-  hitButton.on("click", function() { socket.emit("hit"); });
+  var hitButton = $("<button></button>")
+    .append("Hit")
+    .addClass("hit")
+    .prop("disabled", true)
+    .on("click", function() {
+      socket.emit("perform action", "hit");
+      disableButtons();
+    });
   buttonArea.append(hitButton);
 
   // Create a stand button
-  var standButton = $("<button></button>");
-  standButton.append("Stand");
-  standButton.on("click", function() {
-    socket.emit("stand");
-    disableButtons();
-  });
+  var standButton = $("<button></button>")
+    .append("Stand")
+    .addClass("stand")
+    .prop("disabled", true)
+    .on("click", function() {
+      socket.emit("perform action", "stand");
+      disableButtons();
+    });
   buttonArea.append(standButton);
+
+  // Create a split button
+  var splitButton = $("<button></button>")
+    .append("Split")
+    .addClass("split")
+    .prop("disabled", true)
+    .on("click", function() {
+      socket.emit("perform action", "split");
+      splitButton.prop("disabled", true);
+      split();
+    });
+  buttonArea.append(splitButton);
 };
 
 /**
@@ -285,5 +335,18 @@ $("#resetButton").on("click", function() {
   socket.disconnect();
 
   // Refresh the webpage in a second
-  setTimeout(function() { location.reload() }, 1000);
+  setTimeout(function() { location.reload(); }, 1000);
 });
+
+/**
+ * Moves the leftmost card to the left side and the rightmost card to the right.
+ * Eventually, it should be possible to deal to both of these piles after
+ * splitting them
+ */
+var split = function() {
+  // Create the two distinct areas on the table
+  $(".card-area.player").addClass("left");
+  $(".card-area.split").fadeIn(500);
+  // Move the top card from the left side to the right side
+  $(".card-area.player > .card:last").appendTo(".card-area.split");
+};

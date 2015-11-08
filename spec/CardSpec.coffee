@@ -22,3 +22,11 @@ describe "A card", ->
     card = Card.new 2, Card.suit.HEARTS
     card.flip()
     expect(card.face.down).toBeTruthy()
+
+  it "can return a string representation of itself", ->
+    card = Card.new 2, Card.suit.HEARTS
+    expect(card.string).toBe("2♥")
+
+  it "returns string representations of itself for face cards too", ->
+    card = Card.new Card.rank.ACE, Card.suit.SPADES
+    expect(card.string).toBe("A♠")

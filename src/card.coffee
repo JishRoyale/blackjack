@@ -1,4 +1,4 @@
-# card.coffee
+# Card.coffee
 #
 # @author Abe Fehr
 #
@@ -21,11 +21,29 @@ Card = ->
       face.down = !face.down
       face.up = !face.up
 
+    # Return a string representation of the card
+    string = (->
+      "#{
+        switch rank
+          when ranks.ACE then "A"
+          when ranks.JACK then "J"
+          when ranks.QUEEN then "Q"
+          when ranks.KING then "K"
+          else rank
+        }#{
+        switch suit
+          when suits.HEARTS then "♥"
+          when suits.DIAMONDS then "♦"
+          when suits.CLUBS then "♣"
+          when suits.SPADES then "♠"
+        }")()
+
     {
       rank: rank
       suit: suit
       flip: flip
       face: face
+      string: string
     }
 
   # An enumeration of the various suits

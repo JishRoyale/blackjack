@@ -1,8 +1,8 @@
-# deck.coffee
+# Deck.coffee
 #
 # @author Abe Fehr
 #
-Card = require "../src/card"
+Card = require "../src/Card"
 
 # The Deck module
 Deck = ->

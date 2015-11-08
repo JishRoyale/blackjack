@@ -1,4 +1,4 @@
-# deck-spec.coffee
+# DeckSpec.coffee
 #
 # @author Abe Fehr
 #
@@ -7,7 +7,7 @@ Card = require "../src/card"
 
 deck = Deck.new()
 
-describe "The deck", ->
+describe "A deck", ->
 
   it "is contains an array of cards", ->
     expect(deck.cards.length).toBeGreaterThan -1

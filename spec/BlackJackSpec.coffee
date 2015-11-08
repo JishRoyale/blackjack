@@ -1,4 +1,4 @@
-# blackjack-spec.coffee
+# BlackJackSpec.coffee
 #
 # @author Abe Fehr
 #
@@ -7,12 +7,44 @@ Card = require "../src/card"
 
 describe "The game of blackjack", ->
 
-  it "has a state", ->
-    game = BlackJack.new()
-    expect(game.state?).toBeTruthy()
+  dummyTable =
+    someFakeProperty: undefined
+    players:
+      getValues: -> [
+        { hands: [[]] }
+      ]
 
-  it "is in open state by default", ->
-    game = BlackJack.new()
+  it "hasn't started the game yet after initialization", ->
+    game = new BlackJack dummyTable
+    expect(game.started).toBeFalsy()
+
+  it "can start the game if asked to", ->
+    game = new BlackJack dummyTable
+    game.start []
+    expect(game.started).toBeTruthy()
+
+  it "starting the game gives the dealer at least one card (the rest are dealt
+  asynchronously)", ->
+    game = new BlackJack dummyTable
+    game.start []
+    expect(game.dealer.length).not.toBe 0
+
+  it "doesn't give the dealer any cards before it's started though", ->
+    game = new BlackJack dummyTable
+    expect(game.dealer.length).toBe 0
+
+  it "contains an instance of the table that started it", ->
+    game = new BlackJack dummyTable
+    expect(game.table?).toBeTruthy()
+
+  it "has the ability to deal cards to players", ->
+    game = new BlackJack dummyTable
+    game.deal2ToAllPlayers()
+    # TODO: Need to write a proper matcher for this yet
+
+
+  ###it "is in open state by default", ->
+    game = new BlackJack dummyTable
     expect(game.state).toBe BlackJack.state.OPEN
 
   it "gets value from a card's rank", ->
@@ -47,3 +79,4 @@ describe "The game of blackjack", ->
     hand.push Card.new 2, Card.suit.HEARTS
     hand.push Card.new Card.rank.ACE, Card.suit.HEARTS
     expect(BlackJack.getHandValue hand, true).toBe 3
+  ###
