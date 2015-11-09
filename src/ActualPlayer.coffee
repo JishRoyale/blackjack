@@ -14,6 +14,7 @@ class ActualPlayer extends Player
   # @param [Socket] socket the socket of the player
   #
   constructor: (@uuid, @socket) ->
+    @type = "human"
     super @uuid, @socket
 
   # Requests an action for a round from the player

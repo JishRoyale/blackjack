@@ -23,6 +23,7 @@ class AIPlayer extends Player
     @uuid = ""
     @uuid += Math.random().toString(36).substr(2) while @uuid.length < 24
     dummy.id += Math.random().toString(36).substr(2) while dummy.id.length < 12
+    @type = "robot"
     # Call the super's constructor
     super @uuid, dummy
 
@@ -44,7 +45,7 @@ class AIPlayer extends Player
   requestAction: (dealer) ->
 
     # For now, always stand
-    @handlers.stand()
+    @handlers.stand @socket
 
     ###
     if # your two initial cards are the same rank, then split

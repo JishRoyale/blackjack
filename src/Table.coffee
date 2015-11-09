@@ -59,6 +59,7 @@ class Table
     if not @registered player.uuid
       if @players.size < @game.MAX_PLAYERS and @state is Table.states.OPEN
         @players.set player.socket.id, player
+        console.log "Added player's ID is #{player.socket.id}"
         return true
     return false
 
@@ -82,6 +83,7 @@ class Table
         sid: player.socket.id
         hands: player.hands
         status: player.status
+        type: player.type
     sendToAll "stats", players
 
 
@@ -176,7 +178,7 @@ class Table
           sendPlayerInfo()
         when "hit"
           self.players.get(socket.id).status = "hitting"
-          self.game.hit self.players.get socket.id, ->
+          self.game.hit (self.players.get socket.id), ->
             self.game.nextTurn()
             sendPlayerInfo()
 
@@ -197,14 +199,15 @@ class Table
     socket.on "add AI player", ->
       handlers =
         hit: (->)
-        stand: ->
+        stand: (roboSocket) ->
           console.log "A request was made (by a robot) to stand."
-          self.players.get(socket.id).status = "standing"
+          console.log "The robot's ID is #{roboSocket.id}"
+          self.players.get(roboSocket.id).status = "standing"
           console.log "Just changed this robot's status to standing"
           self.game.nextTurn()
           sendPlayerInfo()
           console.log "Information was just sent to everyone on all the status'"
-          console.log "Status: #{self.players.get(socket.id).status}"
+          console.log "Status: #{self.players.get(roboSocket.id).status}"
         split: (->)
       unless self.register new AIPlayer handlers
         socket.emit "display message", "There's not enough room at the table for

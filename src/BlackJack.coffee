@@ -94,6 +94,14 @@ class BlackJack
     if not @events[event]? then @events[event] = []
     @events[event].push callback
 
+  allStanding: ->
+    for player in @table.players.getValues()
+      console.log "STATUS: #{player.uuid.substring 0,5} / #{player.status}"
+      if player.status != "standing"
+        console.log "Returning false"
+        return false
+    return true
+
   # Advances the turn by one. If player 0 was playing, it's now player 2's turn.
   # The turns only advance by one each time and wrap around the end modularly.
   # If the next player is standing they cannot make action so he is skipped. If
@@ -101,22 +109,8 @@ class BlackJack
   # 17
   #
   nextTurn: () ->
-    currentPlayer = ++currentPlayer % @table.players.size
-    guy = @table.players.getValues()[currentPlayer]
-    console.log "Who requested the thing: #{guy.uuid}"
-    console.log "He's: #{guy.status} by the way"
-    counter = 0
-    while guy.status is "standing" and ++counter < @table.players.size
-      currentPlayer = ++currentPlayer % @table.players.size
-      guy = @table.players.getValues()[currentPlayer]
-
-    # Do the turn
-    console.log "Counter: #{counter} and players size: #{@table.players.size}"
-    unless counter is @table.players.size - 1
-      guy.status = "playing"
-      console.log "Just changed some player's status to playing"
-      guy.requestAction @dealer
-    else
+    # If everyone is standing, just do something else
+    if @allStanding()
       console.log "Everyone is standing"
       # Deal cards to the dealer until they have 17 or more
       console.log "#{JSON.stringify @dealer}"
@@ -126,6 +120,19 @@ class BlackJack
         setTimeout ->
           self.dealUntil 17
         , 1500 # Waits until the card has been flipped on the player's side
+    else
+      currentPlayer = ++currentPlayer % @table.players.size
+      guy = @table.players.getValues()[currentPlayer]
+      console.log "Who requested the thing: #{guy.uuid}"
+      console.log "He's: #{guy.status} by the way"
+      while guy.status is "standing"
+        currentPlayer = ++currentPlayer % @table.players.size
+        guy = @table.players.getValues()[currentPlayer]
+
+      # Do the turn
+      guy.status = "playing"
+      console.log "Just changed some player's status to playing"
+      guy.requestAction @dealer
 
   # Hits to the player by adding a card to their hand. Executes a callback once
   # the deal is complete

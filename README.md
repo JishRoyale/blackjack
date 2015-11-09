@@ -5,22 +5,19 @@ My multiplayer, HTML5 BlackJack game
 # Things left to do
 
 - splitting
-- fix the issue where more than 1 additional AI player can't stand
-- show the cards under the players in the list more beautifully
 - re-add the score bit so the scores show up properly
-- dealer should deal until 17
-- multiple real players
 - detect who wins
-- bold whose turn it is
 - remove the player when they disconnect but only reset the table when there are no players
-- do something when the game is ongoing and we try to join
-- show who you are in the player list
+- do something more when the game is ongoing and we try to join
 - detect 7-card-charlie
 - remove the thing where it says "I heard the state was X"
 
 # Selenium Acceptance Testcases(possibly Cucumber as well?)
 
 ### GeneralUITest
+
+Tests the general UI of the main screen in the game. Ensures that all elements exist, but not yet that they're functional.
+
 - title is COMP4004 BlackJack
 - button exists for adding AI players
 - button exists for starting game
@@ -28,6 +25,9 @@ My multiplayer, HTML5 BlackJack game
 - debug box exists for console output
 
 ### AddPlayersTest
+
+Tests the adding players behaviour as well as related behaviour. Ensures that the minimum and maximum limits are met and that adding players really does increase the size of the player list in the list of players at the table.
+
 - game can't be started without adding at least one player
 - AI players can be added to the game
 - added players show up in the list at the top left

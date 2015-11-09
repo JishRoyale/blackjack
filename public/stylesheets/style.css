@@ -149,13 +149,37 @@ div.scores p span { margin-left: 1vh; }
 
 div.players {
   color: #fff;
-  left: 0;
+  left: 2vh;
   position: absolute;
-  top: 0;
+  top: 2vh;
+}
+
+div.players ul {
+  margin: 0;
+  padding: 0;
+}
+
+div.players ul li {
+  border: 1px solid white;
+  box-sizing: border-box;
+  display: table;
+  padding: 1.5vh;
+  width: 100%;
+}
+
+div.players ul li.current {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+div.players ul li p {
+  font-size: 2vh;
+  margin: 0;
 }
 
 div.players h1 {
-  margin: 0;
+  font-size: 3vh;
+  margin: 1vh;
+  text-align: center;
 }
 
 #resetButton {

@@ -6,6 +6,7 @@
 # - contains uuid
 # - contains a list of hands (for splitting later)
 # - contains actual socket with ID
+# - is aware of its own type
 #
 # These players were originally intended to be generic, but are only useful for
 # playing BlackJack at the moment since their requestAction method are specific

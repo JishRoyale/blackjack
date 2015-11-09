@@ -3,6 +3,8 @@ var socket = io();
 var dealer = [];
 var player = [];
 
+var uuid;
+
 /**
  * deal card to dealer
  *
@@ -140,7 +142,7 @@ socket.on("display message", function(message) {
 });
 
 socket.on("state", function(state) {
-  printDebug("Just heard that the current state was: " + state, DEBUG);
+  //printDebug("Just heard that the current state was: " + state, DEBUG);
 
   // If the state was lobby, add the start button
   switch (state) {
@@ -188,11 +190,26 @@ socket.on("stats", function(players) {
   for (var i=0; i<players.length; ++i) {
     var player = players[i];
     // Construct the list item that talks about the player
-    var playerListItem = $("<li></li>")
-      .append("Name: ")
-      .append(player.uuid.substring(0,5)) // Their UUID
-      .append(" - card: " + (player.hands[0][0] && player.hands[0][0] !== undefined ? player.hands[0][0].string : "" ))
-      .append(" - status: " + player.status);
+    var playerListItem = $("<li></li>");
+    var name = $("<p></p>")
+      .append(player.uuid.substring(0,5) + " (")
+      .append(player.uuid == uuid ? "You" : (player.type == "robot" ? "Robot" : "Human"))
+      .append(") : ")
+      .append(player.status);
+    var cardList = $("<p></p>")
+      .append("Cards: [ ")
+      .append((player.hands[0][0] && player.hands[0][0] !== undefined ? player.hands[0][0].string : "" ));
+    for (var j = 0;j < player.hands[0].length - 1; ++j) {
+      cardList.append(", ?");
+    }
+    cardList.append(" ]");
+    playerListItem
+      .append(name)
+      .append(cardList);
+    // If it's the current player's turn, make it visible
+    if(player.status === "playing") {
+      playerListItem.addClass("current");
+    }
     $("div.players").find("ul").append(playerListItem);
   }
 });
