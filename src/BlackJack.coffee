@@ -162,6 +162,7 @@ class BlackJack
       self.fire "deal card to dealer", card
       setTimeout ->
         self.dealUntil limit
+      , 800
 
   ###
   # Decides who won

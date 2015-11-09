@@ -5,12 +5,11 @@ My multiplayer, HTML5 BlackJack game
 # Things left to do
 
 - splitting
-- re-add the score bit so the scores show up properly
 - detect who wins
 - remove the player when they disconnect but only reset the table when there are no players
 - do something more when the game is ongoing and we try to join
 - detect 7-card-charlie
-- remove the thing where it says "I heard the state was X"
+- allow score to be shown for splits
 
 # Selenium Acceptance Testcases(possibly Cucumber as well?)
 

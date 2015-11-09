@@ -86,6 +86,16 @@ class Table
         type: player.type
     sendToAll "stats", players
 
+  # Sends the dealer's score(the faceup card) to each player and sends the score
+  # of each player to their respective socket
+  #
+  # Only counts the score for the first hand! TODO: Extend for splits
+  #
+  sendScores = ->
+    sendToAll "update dealer score", self.game.getHandValue self.game.dealer
+    for player in self.players.getValues()
+      score = self.game.getHandValue player.hands[0]
+      player.socket.emit "update player score", score
 
   # Registers to all events in the game
   #
@@ -101,7 +111,7 @@ class Table
       for player in self.players.getValues()
         player.socket.emit "deal card to dealer", card
       sendPlayerInfo()
-      #sendScores()
+      sendScores()
 
     # Deals a card to a particular player
     #
@@ -113,11 +123,12 @@ class Table
       for hand in who.hands
         hand.push what
       sendPlayerInfo()
-      #sendScores()
+      sendScores()
 
     @game.on "flip hole card", ->
       sendToAll "flip hole card"
       sendPlayerInfo()
+      sendScores()
 
     # Notifies the user that the game is complete
     #
@@ -214,15 +225,6 @@ class Table
         another player"
       sendPlayerInfo()
       console.log "A robot was added to the game"
-
-  ###
-
-  sendScores = ->
-    allSockets "update dealer score", blackjack.getHandValue blackjack.dealer
-    for player in players.getValues()
-      score = blackjack.getHandValue player.hand
-      sockets.get(player.sid).emit "update player score", score
-  ###
 
   #
   # Removes a player from the game
