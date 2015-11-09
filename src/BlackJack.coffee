@@ -38,6 +38,10 @@ class BlackJack
         callback()
 
   # Deals 2 cards to the dealer: the face-up card and the hole card
+  #
+  # @param [function] callback the function to call once the dealer has finished
+  #   dealing themself 2 cards
+  #
   deal2ToDealer: (callback) ->
     card = @deck.dealCard true
     @dealer.push card
@@ -94,11 +98,12 @@ class BlackJack
     if not @events[event]? then @events[event] = []
     @events[event].push callback
 
-  allStanding: ->
+  # Checks whether or not all players are either standing or busted
+  #
+  allFinished: ->
     for player in @table.players.getValues()
       console.log "STATUS: #{player.uuid.substring 0,5} / #{player.status}"
-      if player.status != "standing"
-        console.log "Returning false"
+      unless player.status is "standing" or player.status is "busted"
         return false
     return true
 
@@ -108,9 +113,9 @@ class BlackJack
   # no player is not standing, then the dealer will flip his card and deal until
   # 17
   #
-  nextTurn: () ->
+  nextTurn: ->
     # If everyone is standing, just do something else
-    if @allStanding()
+    if @allFinished()
       console.log "Everyone is standing"
       # Deal cards to the dealer until they have 17 or more
       console.log "#{JSON.stringify @dealer}"
@@ -125,7 +130,7 @@ class BlackJack
       guy = @table.players.getValues()[currentPlayer]
       console.log "Who requested the thing: #{guy.uuid}"
       console.log "He's: #{guy.status} by the way"
-      while guy.status is "standing"
+      while guy.status is "standing" or guy.status is "busted"
         currentPlayer = ++currentPlayer % @table.players.size
         guy = @table.players.getValues()[currentPlayer]
 
@@ -144,7 +149,7 @@ class BlackJack
     card = @deck.dealCard true
     @fire "deal card to player", player, card
     setTimeout ->
-      callback()
+      callback BlackJack.getHandValue(player.hands[0]) > 21
     , 800
     #@checkForWin player
 
@@ -153,8 +158,8 @@ class BlackJack
   # @param [number] limit the soft value to count until
   #
   dealUntil: (limit) ->
-    if self.getHandValue(self.dealer) is 21 or
-    self.getHandValue(self.dealer, true) >= limit
+    if BlackJack.getHandValue(self.dealer) is 21 or
+    BlackJack.getHandValue(self.dealer, true) >= limit
       #@checkForWin socket, true
     else
       card = self.deck.dealCard true
@@ -164,7 +169,6 @@ class BlackJack
         self.dealUntil limit
       , 800
 
-  ###
   # Decides who won
   #
   # @param [Socket] socket the player who is checking the win
@@ -174,8 +178,8 @@ class BlackJack
   #
   checkForWin: (player, compare) ->
     # Get the hand values for the dealer and the player
-    dealerScore = @getHandValue @dealer
-    playerScore = @getHandValue player.hand
+    ###dealerScore = BlackJack.getHandValue @dealer
+    playerScore = BlackJackgetHandValue player.hand
     if compare and playerScore is dealerScore then @fire "game over", "push"
     else if dealerScore > 21 then @fire "game over", "dealer bust"
     else if playerScore > 21 then @fire "game over", "player bust"
@@ -188,8 +192,7 @@ class BlackJack
       #  socket.emit "flip dealer card"
       #  dealer[1].flip()
       #  broadcastScores socket
-
-  ###
+    ###
   # Returns a value for a passed in card. Aces always get returned low(1).
   # Counting Aces high involves another calculation elsewhere
   #
@@ -197,7 +200,7 @@ class BlackJack
   #
   # @return [number] the value of a single card in the hand
   #
-  getValueOf: (card) ->
+  @getValueOf: (card) ->
     if card.face.down then 0 else if card.rank <= 10 then card.rank else 10
 
   # Gets the total value of the hand, with Aces optionally soft or hard(default)
@@ -209,12 +212,12 @@ class BlackJack
   #
   # @return [number] the value of the hand
   #
-  getHandValue: (hand, soft) ->
+  @getHandValue: (hand, soft) ->
     total = 0
     ace = false
     # Count the cards in the hand, aces soft
     for card in hand
-      total += @getValueOf card
+      total += BlackJack.getValueOf card
       if card.rank is Card.rank.ACE and card.face.up then ace = true
     # If the hand contains at least one ace, one of them is high (if possible)
     if not soft and ace and total <= 11 then total += 10

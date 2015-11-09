@@ -4,28 +4,32 @@
 #
 # @author Abe Fehr
 #
+BlackJack = require "../src/BlackJack"
 Player = require "../src/Player"
 
 class AIPlayer extends Player
 
+  self = undefined
+
   # Returns a new instance of an AIPlayer
   #
-  # @param [object] handlers what to do when hit, stand and split are requested
+  # @param [object] actions what to do when hit, stand and split are requested
   #   by this AI Player. Should contain a hit, stand, and split function
   #
-  constructor: (@handlers) ->
+  constructor: (@actions) ->
     # Create a fake socket to give to the player
-    dummy =
+    @socket =
       emit: (->)
       id: ""
       disconnect: (->)
+    @socket.id+=Math.random().toString(36).substr(2) while @socket.id.length < 9
     # Generate own UUID
     @uuid = ""
     @uuid += Math.random().toString(36).substr(2) while @uuid.length < 24
-    dummy.id += Math.random().toString(36).substr(2) while dummy.id.length < 12
     @type = "robot"
+    self = @
     # Call the super's constructor
-    super @uuid, dummy
+    super @uuid, @socket
 
   # Requests an action for a round from the player. An action is chosen based on
   # the following strategy:
@@ -43,13 +47,20 @@ class AIPlayer extends Player
   # @param [array] dealer the cards in the dealer's hand
   #
   requestAction: (dealer) ->
-
-    # For now, always stand
-    @handlers.stand @socket
+    console.log "Was requested to perform some action"
+    setTimeout ->
+      console.log "performing some action"
+      if self.hands[0]? and self.hands[0][0].rank is self.hands[0][1].rank
+        self.actions.split self.socket
+      else if BlackJack.getHandValue self.hands[0] is 21
+        self.actions.stand self.socket
+      else if BlackJack.getHandValue(self.hands[0]) >= 18 and
+      BlackJack.getHandValue(self.hands[0]) <= 20
+        self.actions.stand self.socket
+      else self.actions.stand self.socket
+    , 900 # Wait a little to make it seem more like a non-AI player
 
     ###
-    if # your two initial cards are the same rank, then split
-    if # your current value is 21, then stand
     else if # at least one other player has stood with two cards and the visible
       # card being an ace or a card of value 10
     else if # your value is between 18 and 20

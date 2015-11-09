@@ -63,6 +63,16 @@ class Table
         return true
     return false
 
+  deregister: (sid) ->
+    if @players.get(sid)?
+      @players.delete sid
+
+  allPlayersAreRobots: ->
+    for player in @players.getValues()
+      unless player.type is "robot"
+        return false
+    return true
+
   # Sends a message to every single player at the table
   #
   # @param [string] message the message to send to each player
@@ -92,10 +102,12 @@ class Table
   # Only counts the score for the first hand! TODO: Extend for splits
   #
   sendScores = ->
-    sendToAll "update dealer score", self.game.getHandValue self.game.dealer
+    sendToAll "update dealer score", self.GameType.getHandValue self.game.dealer
     for player in self.players.getValues()
-      score = self.game.getHandValue player.hands[0]
-      player.socket.emit "update player score", score
+      scores = []
+      for hand in player.hands
+        scores.push(self.GameType.getHandValue hand)
+      player.socket.emit "update player score", scores
 
   # Registers to all events in the game
   #
@@ -164,7 +176,7 @@ class Table
         socket.emit "display message", "Welcome to 4004 BlackJack! Press start
         to play once there are enough other players"
         socket.emit "state", self.state
-      sendPlayerInfo()
+        sendPlayerInfo()
 
     # Sets the player's status to ready and starts the game if every other
     # player is also ready to begin.
@@ -189,21 +201,27 @@ class Table
           sendPlayerInfo()
         when "hit"
           self.players.get(socket.id).status = "hitting"
-          self.game.hit (self.players.get socket.id), ->
+          self.game.hit (self.players.get socket.id), (bust) ->
+            if bust
+              self.players.get(socket.id).status = "busted"
             self.game.nextTurn()
             sendPlayerInfo()
 
-    # disconnect
+    # When the user disconnects, they should be removed from the table. This, of
+    # course, could negatively affect the game if they disconnect spuriously
     #
     # What to do when a player disconnects from the game
     socket.on "disconnect", ->
       console.log "A player has disconnected"
-      #removePlayer socket
-      #socket.disconnect()
-      self.players = new Map()
-      self.game = new self.GameType self
-      self.registerGameEvents()
-      self.state = Table.states.OPEN
+      self.deregister socket.id
+      socket.disconnect()
+      if self.players.size is 0 or self.allPlayersAreRobots()
+        # Just reset everything to be sure
+        self.players = new Map()
+        self.game = new self.GameType self
+        self.registerGameEvents()
+        self.state = Table.states.OPEN
+      sendPlayerInfo()
 
     # Adds an AI Player to the game as well as sets all of its handlers.
     #
@@ -226,26 +244,13 @@ class Table
       sendPlayerInfo()
       console.log "A robot was added to the game"
 
-  #
-  # Removes a player from the game
-  #
-  # @param [socket] socket the socket of the player to remove
-  ###
-  removePlayer = (socket) ->
-    players.delete socket.id
-    sockets.delete socket.id
-
-  ###
-
-
     # error
     #
     # Logs the error message to the console
-  ###
     socket.on "error", (err) ->
       console.log "> Error! #{err}"
       #socket.emit "error", err
-  ###
+
     # play again
   ###
     socket.on "play again", ->

@@ -43,66 +43,12 @@ socket.on("deal card to player", function(properties) {
 });
 
 /**
- * dealer bust
+ * game over
  */
-socket.on("dealer bust", function(score) {
+socket.on("game over", function(type) {
   disableButtons();
-  alert("Dealer busts! You win!");
-  askToPlayAgain();
-});
-
-/**
- * player bust
- */
-socket.on("player bust", function(score) {
-  disableButtons();
-  alert("You bust! Dealer wins!");
-  askToPlayAgain();
-});
-
-/**
- * dealer wins
- */
-socket.on("dealer wins", function(score) {
-  disableButtons();
-  alert("Dealer wins!");
-  askToPlayAgain();
-});
-
-/**
- * player wins
- */
-socket.on("player wins", function(score) {
-  disableButtons();
-  alert("Player wins!");
-  askToPlayAgain();
-});
-
-/**
- * dealer blackjack
- */
-socket.on("dealer blackjack", function(score) {
-  disableButtons();
-  alert("Dealer blackjack! That sucks!");
-  askToPlayAgain();
-});
-
-/**
- * player blackjack
- */
-socket.on("player blackjack", function(score) {
-  disableButtons();
-  alert("Player blackjack! Yay!");
-  askToPlayAgain();
-});
-
-/**
- * push
- */
-socket.on("push", function(score) {
-  disableButtons();
-  alert("Push! You both tied");
-  askToPlayAgain();
+  alert(type);
+  //askToPlayAgain();
 });
 
 /**
@@ -119,17 +65,11 @@ socket.on("update dealer score", function(score) {
  *
  * Updates the score of the player
  */
-socket.on("update player score", function(score) {
-  $(".scores span.player").html(score);
-});
-
-/**
- * update player score
- *
- * Updates the score of the player
- */
-socket.on("update player score", function(score) {
-  $(".scores span.player").html(score);
+socket.on("update player score", function(scores) {
+  $(".scores span.player").html(scores[0]);
+  if (typeof scores[1] !== "undefined") {
+    $(".scores span.player").append(" / " + scores[1]);
+  }
 });
 
 /**
@@ -141,6 +81,13 @@ socket.on("display message", function(message) {
   printDebug(message, INFO);
 });
 
+/**
+ * Receives a new state from the server. The only ones there are:
+ * - lobby(1) : Corresponds to OPEN state in the table. This basically means
+ *              that players are allowed to join the game
+ * - playing(2) : Corresponds to PLAYING in the table (naturally). No more
+ *                players can be added at this point
+ */
 socket.on("state", function(state) {
   //printDebug("Just heard that the current state was: " + state, DEBUG);
 
@@ -165,6 +112,7 @@ socket.on("connect", function () {
     var date = new Date();
     var randomlyGeneratedUID = Math.random().toString(36).substring(3,16);
     localStorage.setItem("uuid", randomlyGeneratedUID);
+    uuid = randomlyGeneratedUID;
   }
 
   socket.emit("register", uuid);
