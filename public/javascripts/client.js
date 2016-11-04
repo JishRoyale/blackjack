@@ -226,7 +226,7 @@ var switchToPlaying = function() {
 
   // Create a hit button
   var hitButton = $("<button></button>")
-    .append("Hit")
+    .append("Twist")
     .addClass("hit")
     .prop("disabled", true)
     .on("click", function() {
@@ -237,7 +237,7 @@ var switchToPlaying = function() {
 
   // Create a stand button
   var standButton = $("<button></button>")
-    .append("Stand")
+    .append("Stick")
     .addClass("stand")
     .prop("disabled", true)
     .on("click", function() {
