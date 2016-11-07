@@ -1,5 +1,3 @@
-# [COMP4004 BlackJack](http://comp4004blackjack.herokuapp.com/)
-
 #COMMITS HERE DIRECTLY MODIFY THE HEROKU APPLICATION ON A RE-DEPLOY
 
 My multiplayer, HTML5 [BlackJack](https://en.wikipedia.org/wiki/Blackjack) game for Assignments 2 and 3 in COMP4004.
