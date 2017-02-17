@@ -178,7 +178,7 @@ class BlackJack
   #
   checkForWin: (player, compare) ->
     # Get the hand values for the dealer and the player
-    ###dealerScore = BlackJack.getHandValue @dealer
+    dealerScore = BlackJack.getHandValue @dealer
     playerScore = BlackJackgetHandValue player.hand
     if compare and playerScore is dealerScore then @fire "game over", "push"
     else if dealerScore > 21 then @fire "game over", "dealer bust"
